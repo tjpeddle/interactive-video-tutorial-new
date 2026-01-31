@@ -999,10 +999,22 @@
                     </div>
                     
                     <div class="video-controls">
-                        <button class="control-btn" onclick="togglePlay()">▶️ Play/Pause</button>
-                        <button class="control-btn" onclick="useCurrentTime()">⏱️ Use Current Time</button>
-                        <button class="control-btn" id="clickToZoomBtn" onclick="enableZoomSelection()" style="display:none;">🎯 Click Video to Set Zoom</button>
-                        <div class="time-display" id="currentTime">00:00</div>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                            <button class="control-btn" onclick="skipBackward()" title="Skip back 5 seconds">⏪ -5s</button>
+                            <button class="control-btn" onclick="togglePlay()" id="playPauseBtn">▶️ Play</button>
+                            <button class="control-btn" onclick="skipForward()" title="Skip forward 5 seconds">⏩ +5s</button>
+                            <button class="control-btn" onclick="useCurrentTime()">⏱️ Use Current Time</button>
+                            <div class="time-display" id="currentTime">00:00</div>
+                            <div class="time-display" style="color: var(--text-gray);">/</div>
+                            <div class="time-display" id="totalTime">00:00</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="flex: 1;">
+                                <input type="range" id="videoSeeker" min="0" max="100" value="0" style="width: 100%; cursor: pointer;">
+                            </div>
+                            <span style="color: var(--text-gray); font-size: 0.9rem;">🔊</span>
+                            <input type="range" id="volumeControl" min="0" max="100" value="100" style="width: 100px; cursor: pointer;">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1062,7 +1074,7 @@
                     <div id="statementForm" style="display: none;">
                         <div class="form-group">
                             <label>Statement Type</label>
-                            <select id="statementType" style="width: 100%; padding: 12px; background: var(--bg-dark); border: 2px solid var(--border); color: var(--text-white); border-radius: 8px; font-size: 1rem; margin-bottom: 15px;">
+                            <select id="statementType" onchange="handleStatementTypeChange()" style="width: 100%; padding: 12px; background: var(--bg-dark); border: 2px solid var(--border); color: var(--text-white); border-radius: 8px; font-size: 1rem; margin-bottom: 15px;">
                                 <option value="note">💬 Note (Blue)</option>
                                 <option value="tip">💡 Tip (Yellow)</option>
                                 <option value="warning">⚠️ Warning (Red)</option>
@@ -1070,7 +1082,13 @@
                                 <option value="definition">🎯 Definition (Purple)</option>
                                 <option value="welcome">🎬 Welcome (Intro)</option>
                                 <option value="congrats">🎉 Congratulations (Ending)</option>
+                                <option value="custom">✨ Custom Title...</option>
                             </select>
+                        </div>
+                        
+                        <div class="form-group" id="customTitleSection" style="display: none;">
+                            <label>Custom Title</label>
+                            <input type="text" id="customStatementTitle" placeholder="Enter your custom title (e.g., 'Step 1 Instructions')" style="width: 100%; padding: 12px; background: var(--bg-dark); border: 2px solid var(--border); color: var(--text-white); border-radius: 8px; font-size: 1rem; margin-bottom: 15px;">
                         </div>
                         
                         <div class="form-group">
@@ -1308,7 +1326,11 @@
             showNotification('Video loaded successfully! 🎉');
 
             videoElement.addEventListener('timeupdate', handleTimeUpdate);
+            videoElement.addEventListener('loadedmetadata', () => {
+                document.getElementById('totalTime').textContent = formatTime(videoElement.duration);
+            });
             setupVideoClickListener();
+            setupVideoControls();
         }
 
         function loadYouTube() {
@@ -1357,6 +1379,7 @@
             // Load YouTube API and wait for it to be ready
             loadYouTubeAPI();
             setupVideoClickListener();
+            setupVideoControls();
         }
 
         function loadTestVideo() {
@@ -1456,11 +1479,19 @@
         
         function onPlayerReady(event) {
             showNotification('YouTube player ready! ✅');
+            
+            // Set total time
+            if (youtubePlayer && youtubePlayer.getDuration) {
+                const duration = youtubePlayer.getDuration();
+                document.getElementById('totalTime').textContent = formatTime(duration);
+            }
+            
             setInterval(() => {
                 if (youtubePlayer && youtubePlayer.getCurrentTime) {
                     try {
                         const time = youtubePlayer.getCurrentTime();
                         document.getElementById('currentTime').textContent = formatTime(time);
+                        updateVideoSeeker();
                         if (currentMode === 'preview') {
                             checkForItems(time);
                         }
@@ -1601,7 +1632,10 @@
         function handleTimeUpdate() {
             if (videoElement) {
                 const time = videoElement.currentTime;
+                const duration = videoElement.duration;
                 document.getElementById('currentTime').textContent = formatTime(time);
+                document.getElementById('totalTime').textContent = formatTime(duration);
+                updateVideoSeeker();
                 if (currentMode === 'preview') {
                     checkForItems(time);
                 }
@@ -1618,16 +1652,85 @@
             if (videoSource === 'upload' && videoElement) {
                 if (videoElement.paused) {
                     videoElement.play();
+                    document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
                 } else {
                     videoElement.pause();
+                    document.getElementById('playPauseBtn').textContent = '▶️ Play';
                 }
-            } else if (videoSource === 'youtube' && youtubePlayer) {
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.getPlayerState) {
                 const state = youtubePlayer.getPlayerState();
                 if (state === 1) {
                     youtubePlayer.pauseVideo();
+                    document.getElementById('playPauseBtn').textContent = '▶️ Play';
                 } else {
                     youtubePlayer.playVideo();
+                    document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
                 }
+            }
+        }
+        
+        function skipForward() {
+            if (videoSource === 'upload' && videoElement) {
+                videoElement.currentTime = Math.min(videoElement.currentTime + 5, videoElement.duration);
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.seekTo) {
+                const current = youtubePlayer.getCurrentTime();
+                const duration = youtubePlayer.getDuration();
+                youtubePlayer.seekTo(Math.min(current + 5, duration), true);
+            }
+        }
+        
+        function skipBackward() {
+            if (videoSource === 'upload' && videoElement) {
+                videoElement.currentTime = Math.max(videoElement.currentTime - 5, 0);
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.seekTo) {
+                const current = youtubePlayer.getCurrentTime();
+                youtubePlayer.seekTo(Math.max(current - 5, 0), true);
+            }
+        }
+        
+        function setupVideoControls() {
+            // Setup video seeker
+            const seeker = document.getElementById('videoSeeker');
+            const volumeControl = document.getElementById('volumeControl');
+            
+            if (seeker) {
+                seeker.addEventListener('input', function() {
+                    const percentage = this.value;
+                    if (videoSource === 'upload' && videoElement) {
+                        const time = (percentage / 100) * videoElement.duration;
+                        videoElement.currentTime = time;
+                    } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.getDuration) {
+                        const time = (percentage / 100) * youtubePlayer.getDuration();
+                        youtubePlayer.seekTo(time, true);
+                    }
+                });
+            }
+            
+            // Setup volume control
+            if (volumeControl) {
+                volumeControl.addEventListener('input', function() {
+                    const volume = this.value / 100;
+                    if (videoSource === 'upload' && videoElement) {
+                        videoElement.volume = volume;
+                    } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.setVolume) {
+                        youtubePlayer.setVolume(this.value);
+                    }
+                });
+            }
+        }
+        
+        function updateVideoSeeker() {
+            const seeker = document.getElementById('videoSeeker');
+            if (!seeker) return;
+            
+            if (videoSource === 'upload' && videoElement) {
+                const percentage = (videoElement.currentTime / videoElement.duration) * 100;
+                seeker.value = percentage || 0;
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.getCurrentTime) {
+                const current = youtubePlayer.getCurrentTime();
+                const duration = youtubePlayer.getDuration();
+                const percentage = (current / duration) * 100;
+                seeker.value = percentage || 0;
             }
         }
 
@@ -1712,11 +1815,31 @@
             showNotification('Question added! ✅');
         }
 
+        function handleStatementTypeChange() {
+            const type = document.getElementById('statementType').value;
+            const customSection = document.getElementById('customTitleSection');
+            
+            if (type === 'custom') {
+                customSection.style.display = 'block';
+            } else {
+                customSection.style.display = 'none';
+            }
+        }
+
         function addStatement(timestamp) {
             const statementText = document.getElementById('statementText').value;
-            const statementType = document.getElementById('statementType').value;
+            let statementType = document.getElementById('statementType').value;
             const showIcon = document.getElementById('statementShowIcon').value;
             const size = document.getElementById('statementSize').value;
+            let customTitle = '';
+            
+            if (statementType === 'custom') {
+                customTitle = document.getElementById('customStatementTitle').value.trim();
+                if (!customTitle) {
+                    alert('Please enter a custom title');
+                    return;
+                }
+            }
             
             if (!statementText) {
                 alert('Please enter a statement');
@@ -1725,7 +1848,8 @@
 
             items.push({
                 type: 'statement',
-                statementType: statementType || 'note',
+                statementType: statementType,
+                customTitle: customTitle,
                 showIcon: showIcon || 'yes',
                 size: size || 'small',
                 timestamp: timestamp,
@@ -1802,7 +1926,8 @@
                         'keypoint': '📌 KEY POINT',
                         'definition': '🎯 DEFINITION',
                         'welcome': '🎬 WELCOME',
-                        'congrats': '🎉 CONGRATS'
+                        'congrats': '🎉 CONGRATS',
+                        'custom': '✨ ' + (item.customTitle || 'CUSTOM').toUpperCase()
                     };
                     const label = statementLabels[item.statementType || 'note'];
                     const sizeLabel = item.size ? ' • ' + item.size.toUpperCase() : '';
@@ -1842,6 +1967,11 @@
                 document.getElementById('statementType').value = item.statementType || 'note';
                 document.getElementById('statementShowIcon').value = item.showIcon || 'yes';
                 document.getElementById('statementSize').value = item.size || 'small';
+                
+                if (item.statementType === 'custom' && item.customTitle) {
+                    document.getElementById('customTitleSection').style.display = 'block';
+                    document.getElementById('customStatementTitle').value = item.customTitle;
+                }
             } else {
                 setContentType('zoom');
                 zoomBox = item.zoomBox;
@@ -2105,11 +2235,15 @@
                 'keypoint': { icon: '📌', title: 'Key Point', color: 'var(--success)' },
                 'definition': { icon: '🎯', title: 'Definition', color: '#9775fa' },
                 'welcome': { icon: '🎬', title: 'Welcome', color: 'var(--primary)' },
-                'congrats': { icon: '🎉', title: 'Congratulations', color: 'var(--success)' }
+                'congrats': { icon: '🎉', title: 'Congratulations', color: 'var(--success)' },
+                'custom': { icon: '✨', title: item.customTitle || 'Custom', color: 'var(--primary)' }
             };
             
             const type = statementTypes[item.statementType || 'note'];
-            const showIcon = item.showIcon !== 'no'; // Default to showing icon if not specified
+            
+            // Use custom title if provided
+            const displayTitle = (item.statementType === 'custom' && item.customTitle) ? item.customTitle : type.title;
+            const showIcon = item.showIcon !== 'no';
             const size = item.size || 'small';
             
             // Update overlay heading and styling
@@ -2119,7 +2253,7 @@
             const textBox = document.getElementById('overlayStatementText');
             
             // Set heading with or without icon
-            heading.textContent = showIcon ? (type.icon + ' ' + type.title) : type.title;
+            heading.textContent = showIcon ? (type.icon + ' ' + displayTitle) : displayTitle;
             heading.style.color = type.color;
             overlayContent.style.borderColor = type.color;
             textBox.style.borderLeftColor = type.color;
