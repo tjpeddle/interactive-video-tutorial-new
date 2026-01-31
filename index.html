@@ -1282,34 +1282,51 @@
         }
 
         function setContentType(type) {
+            console.log('setContentType called with:', type);
             contentType = type;
             document.querySelectorAll('.type-toggle-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            
+            // Find the clicked button and make it active
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
 
             const questionForm = document.getElementById('questionForm');
             const statementForm = document.getElementById('statementForm');
             const zoomForm = document.getElementById('zoomForm');
             const addBtn = document.getElementById('addBtn');
-            const clickToZoomBtn = document.getElementById('clickToZoomBtn');
+
+            console.log('Forms found:', {
+                questionForm: !!questionForm,
+                statementForm: !!statementForm,
+                zoomForm: !!zoomForm,
+                addBtn: !!addBtn
+            });
+
+            if (!questionForm || !statementForm || !zoomForm || !addBtn) {
+                console.error('One or more form elements not found!');
+                return;
+            }
 
             questionForm.style.display = 'none';
             statementForm.style.display = 'none';
             zoomForm.style.display = 'none';
-            clickToZoomBtn.style.display = 'none';
 
             if (type === 'question') {
                 questionForm.style.display = 'block';
                 addBtn.textContent = '✅ Add Question';
                 addBtn.className = 'btn-primary';
+                console.log('Showing question form');
             } else if (type === 'statement') {
                 statementForm.style.display = 'block';
                 addBtn.textContent = '✅ Add Statement';
                 addBtn.className = 'btn-primary statement';
+                console.log('Showing statement form');
             } else {
                 zoomForm.style.display = 'block';
-                clickToZoomBtn.style.display = 'inline-block';
                 addBtn.textContent = '✅ Add Zoom Point';
                 addBtn.className = 'btn-primary zoom';
+                console.log('Showing zoom form');
             }
         }
 
@@ -1694,28 +1711,36 @@
             const volumeControl = document.getElementById('volumeControl');
             
             if (seeker) {
-                seeker.addEventListener('input', function() {
-                    const percentage = this.value;
-                    if (videoSource === 'upload' && videoElement) {
-                        const time = (percentage / 100) * videoElement.duration;
-                        videoElement.currentTime = time;
-                    } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.getDuration) {
-                        const time = (percentage / 100) * youtubePlayer.getDuration();
-                        youtubePlayer.seekTo(time, true);
-                    }
-                });
+                // Remove old listener if exists
+                seeker.removeEventListener('input', seekerInputHandler);
+                seeker.addEventListener('input', seekerInputHandler);
             }
             
             // Setup volume control
             if (volumeControl) {
-                volumeControl.addEventListener('input', function() {
-                    const volume = this.value / 100;
-                    if (videoSource === 'upload' && videoElement) {
-                        videoElement.volume = volume;
-                    } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.setVolume) {
-                        youtubePlayer.setVolume(this.value);
-                    }
-                });
+                // Remove old listener if exists
+                volumeControl.removeEventListener('input', volumeInputHandler);
+                volumeControl.addEventListener('input', volumeInputHandler);
+            }
+        }
+        
+        function seekerInputHandler() {
+            const percentage = this.value;
+            if (videoSource === 'upload' && videoElement) {
+                const time = (percentage / 100) * videoElement.duration;
+                videoElement.currentTime = time;
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.getDuration) {
+                const time = (percentage / 100) * youtubePlayer.getDuration();
+                youtubePlayer.seekTo(time, true);
+            }
+        }
+        
+        function volumeInputHandler() {
+            const volume = this.value / 100;
+            if (videoSource === 'upload' && videoElement) {
+                videoElement.volume = volume;
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.setVolume) {
+                youtubePlayer.setVolume(this.value);
             }
         }
         
@@ -1723,14 +1748,20 @@
             const seeker = document.getElementById('videoSeeker');
             if (!seeker) return;
             
-            if (videoSource === 'upload' && videoElement) {
+            if (videoSource === 'upload' && videoElement && videoElement.duration) {
                 const percentage = (videoElement.currentTime / videoElement.duration) * 100;
                 seeker.value = percentage || 0;
-            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.getCurrentTime) {
-                const current = youtubePlayer.getCurrentTime();
-                const duration = youtubePlayer.getDuration();
-                const percentage = (current / duration) * 100;
-                seeker.value = percentage || 0;
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.getCurrentTime && youtubePlayer.getDuration) {
+                try {
+                    const current = youtubePlayer.getCurrentTime();
+                    const duration = youtubePlayer.getDuration();
+                    if (duration > 0) {
+                        const percentage = (current / duration) * 100;
+                        seeker.value = percentage || 0;
+                    }
+                } catch (e) {
+                    // Silently handle errors
+                }
             }
         }
 
@@ -1896,10 +1927,20 @@
             zoomBox = null;
             document.getElementById('zoomCoordinates').textContent = '';
             document.getElementById('zoomPreview').style.backgroundColor = '';
-            document.getElementById('zoomStatus').textContent = 'Click button above, then drag on video to draw zoom area';
+            
+            const zoomStatus = document.getElementById('zoomStatus');
+            if (zoomStatus) {
+                zoomStatus.textContent = 'Click button above, then drag on video to draw zoom area';
+            }
             
             const drawRect = document.getElementById('zoomDrawRect');
             if (drawRect) drawRect.style.display = 'none';
+            
+            const customSection = document.getElementById('customTitleSection');
+            if (customSection) customSection.style.display = 'none';
+            
+            const customTitle = document.getElementById('customStatementTitle');
+            if (customTitle) customTitle.value = '';
             
             document.getElementById('zoomOverlay').innerHTML = '';
         }
