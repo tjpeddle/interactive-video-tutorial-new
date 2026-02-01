@@ -2776,8 +2776,192 @@
 
         function generateStandaloneHTML() {
             const styleContent = document.querySelector('style').textContent;
+            const certTitle = document.getElementById('certificateTitle').value || 'Interactive Video Tutorial';
+            const certMessage = document.getElementById('certificateMessage').value || 'Your commitment to learning and professional development is appreciated.';
             
-            return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Interactive Video Tutorial</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>' + styleContent + '</style></head><body><header><div class="container"><h1>🎬 Interactive Video Tutorial</h1><p class="subtitle">Watch and learn with interactive questions, notes, and zoom highlights!</p></div></header><div class="container"><div class="panel"><div class="video-container"><div id="videoContainer"><iframe id="youtubePlayer" src="https://www.youtube.com/embed/' + youtubeVideoId + '?enablejsapi=1" allowfullscreen style="width:100%;height:500px;border:none;"></iframe></div></div><div class="video-controls" style="margin-top:20px;"><button class="control-btn" onclick="togglePlay()">▶️ Play/Pause</button><div class="time-display" id="currentTime">00:00</div></div></div></div><div class="overlay" id="questionOverlay"><div class="overlay-content"><h3 id="overlayQuestionText"></h3><div class="quiz-feedback" id="quizFeedback"></div><div class="quiz-answers" id="quizAnswers"></div><button class="btn-primary" onclick="continueVideo()">Continue Video</button></div></div><div class="overlay" id="statementOverlay"><div class="overlay-content statement"><h3>💬 Note</h3><div class="statement-text" id="overlayStatementText"></div><button class="btn-primary statement" onclick="continueVideo()">Continue Video</button></div></div><div class="overlay" id="zoomOverlay"><div class="overlay-content zoom"><h3>🔍 Focus Point</h3><div class="zoom-text" id="overlayZoomText"></div><div class="zoom-display"><div id="zoomVideoContainer"></div><div id="zoomHighlight"></div></div><button class="btn-primary zoom" onclick="continueVideo()">Continue Video</button></div></div><script>const items=' + JSON.stringify(items) + ';const youtubeVideoId="' + youtubeVideoId + '";let youtubePlayer=null;let itemsShown=new Set();const tag=document.createElement("script");tag.src="https://www.youtube.com/iframe_api";document.head.appendChild(tag);function onYouTubeIframeAPIReady(){youtubePlayer=new YT.Player("youtubePlayer",{events:{onReady:()=>{setInterval(()=>{if(youtubePlayer&&youtubePlayer.getCurrentTime){const time=youtubePlayer.getCurrentTime();document.getElementById("currentTime").textContent=formatTime(time);checkForItems(time)}},100)}}})};function formatTime(s){const m=Math.floor(s/60);const sec=Math.floor(s%60);return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0")};function togglePlay(){if(youtubePlayer){const state=youtubePlayer.getPlayerState();if(state===1)youtubePlayer.pauseVideo();else youtubePlayer.playVideo()}};function checkForItems(currentTime){items.forEach((item,index)=>{if(!itemsShown.has(index)&&currentTime>=item.timestamp&&currentTime<item.timestamp+1){if(item.type==="question"){showQuestion(item,index)}else if(item.type==="statement"){showStatement(item,index)}else{showZoom(item,index)}}})};function showQuestion(item,index){itemsShown.add(index);if(youtubePlayer)youtubePlayer.pauseVideo();document.getElementById("overlayQuestionText").textContent=item.question;document.getElementById("quizFeedback").className="quiz-feedback";const ac=document.getElementById("quizAnswers");ac.innerHTML=item.answers.map((a,i)=>"<div class=\\"quiz-answer\\" onclick=\\"selectAnswer("+i+","+item.correctIndex+")\\">"+a+"</div>").join("");document.getElementById("questionOverlay").classList.add("active")};function showStatement(item,index){itemsShown.add(index);if(youtubePlayer)youtubePlayer.pauseVideo();document.getElementById("overlayStatementText").textContent=item.text;document.getElementById("statementOverlay").classList.add("active")};function showZoom(item,index){itemsShown.add(index);if(youtubePlayer)youtubePlayer.pauseVideo();const txt=document.getElementById("overlayZoomText");if(item.text){txt.textContent=item.text;txt.style.display="block"}else{txt.style.display="none"}const container=document.getElementById("zoomVideoContainer");const highlight=document.getElementById("zoomHighlight");container.innerHTML="<iframe src=\\"https://www.youtube.com/embed/"+youtubeVideoId+"?start="+Math.floor(item.timestamp)+"\\" allowfullscreen style=\\"width:100%;height:500px;border:none;\\"></iframe>";const size=100/item.zoomLevel;highlight.className="zoom-highlight "+item.zoomStyle;highlight.style.left=item.zoomPoint.x+"%";highlight.style.top=item.zoomPoint.y+"%";highlight.style.width=size+"%";highlight.style.height=size+"%";highlight.style.marginLeft="-"+(size/2)+"%";highlight.style.marginTop="-"+(size/2)+"%";document.getElementById("zoomOverlay").classList.add("active")};function selectAnswer(s,c){const ans=document.querySelectorAll(".quiz-answer");const fb=document.getElementById("quizFeedback");ans.forEach((a,i)=>{a.style.pointerEvents="none";if(i===c)a.classList.add("correct");else if(i===s)a.classList.add("incorrect")});if(s===c){fb.textContent="🎉 Correct! Great job!";fb.className="quiz-feedback correct show"}else{fb.textContent="❌ Incorrect. The correct answer is highlighted.";fb.className="quiz-feedback incorrect show"}};function continueVideo(){document.getElementById("questionOverlay").classList.remove("active");document.getElementById("statementOverlay").classList.remove("active");document.getElementById("zoomOverlay").classList.remove("active");if(youtubePlayer)youtubePlayer.playVideo()}<\/script></body></html>';
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Video Tutorial - High Point University</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>${styleContent}</style>
+</head>
+<body>
+    <header style="background: linear-gradient(135deg, #330072 0%, #9678D3 100%); padding: 25px 0; box-shadow: 0 4px 20px rgba(51, 0, 114, 0.3);">
+        <div class="container" style="text-align: center;">
+            <h1 style="margin: 0 0 10px 0; font-size: 2.5rem; font-weight: 700; color: #FFFFFF !important; text-shadow: none; background: none !important; -webkit-text-fill-color: #FFFFFF !important;">High Point University</h1>
+            <p style="margin: 0 0 15px 0; font-size: 1.2rem; color: #FFFFFF !important; font-weight: 500; text-shadow: none;">Office of Accessibility Resources and Services (OARS)</p>
+            <div style="height: 2px; width: 200px; background: rgba(255,255,255,0.6); margin: 0 auto 12px auto;"></div>
+            <p class="subtitle" style="color: #FFFFFF !important; font-size: 1.1rem; margin: 0; font-weight: 500; text-shadow: none;">Interactive Video Tutorial</p>
+        </div>
+    </header>
+    <div class="container">
+        <div class="panel">
+            <p style="text-align: center; color: var(--text-gray); margin-bottom: 20px; font-size: 1.1rem;">Watch and learn with interactive questions, notes, and zoom highlights!</p>
+            <div class="video-container">
+                <div id="videoContainer">
+                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3" allowfullscreen style="width:100%;height:500px;border:none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" id="questionOverlay">
+        <div class="overlay-content">
+            <h3 id="overlayQuestionText"></h3>
+            <div class="quiz-feedback" id="quizFeedback"></div>
+            <div class="quiz-answers" id="quizAnswers"></div>
+            <button class="btn-primary" onclick="continueVideo()">Continue Video</button>
+        </div>
+    </div>
+    <div class="overlay" id="statementOverlay">
+        <div class="overlay-content statement">
+            <h3 id="statementHeading">💬 Note</h3>
+            <div class="statement-text" id="overlayStatementText"></div>
+            <button class="btn-primary statement" onclick="continueVideo()">Continue Video</button>
+        </div>
+    </div>
+    <div class="overlay" id="certificateOverlay" style="display: none;">
+        <div class="overlay-content" style="max-width: 700px; text-align: center; background: white; color: #000; border: 3px solid #330072; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="background: linear-gradient(135deg, #330072 0%, #9678D3 100%); padding: 20px; margin: -20px -20px 20px -20px; border-radius: 12px 12px 0 0;">
+                <h2 style="color: white; margin: 0; font-size: 1.8rem;">High Point University</h2>
+                <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 1rem;">Office of Accessibility Resources and Services (OARS)</p>
+            </div>
+            <div style="padding: 20px;">
+                <h3 style="color: #330072; font-size: 1.8rem; margin-bottom: 20px; font-weight: 700;">Certificate of Completion</h3>
+                <div style="height: 2px; width: 100px; background: #330072; margin: 0 auto 20px auto;"></div>
+                <p style="color: #333; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">Thank you for completing this tutorial!</p>
+                <div style="background: rgba(51, 0, 114, 0.05); padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #330072;">
+                    <p style="color: #330072; font-size: 1.3rem; font-weight: 600; margin: 0;">"${certTitle}"</p>
+                </div>
+                <p style="color: #555; font-size: 1rem; line-height: 1.6; margin: 20px 0;">${certMessage}</p>
+                <p style="color: #888; font-size: 0.95rem; margin: 20px 0;">Completion Date: <span id="certificateDate"></span></p>
+                <button onclick="window.print()" style="background: #330072; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">📄 Print Certificate</button>
+                <button onclick="closeCertificate()" style="background: transparent; color: #888; border: none; padding: 12px 24px; margin-top: 15px; font-size: 0.95rem; cursor: pointer; display: block; margin-left: auto; margin-right: auto;">Close</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const items = ${JSON.stringify(items)};
+        const youtubeVideoId = "${youtubeVideoId}";
+        let youtubePlayer = null;
+        let itemsShown = new Set();
+        let certificateShown = false;
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+        function onYouTubeIframeAPIReady() {
+            youtubePlayer = new YT.Player('youtubePlayer', {
+                events: {
+                    onReady: () => {
+                        setInterval(() => {
+                            if (youtubePlayer && youtubePlayer.getCurrentTime) {
+                                const time = youtubePlayer.getCurrentTime();
+                                checkForItems(time);
+                                checkVideoCompletion(time);
+                            }
+                        }, 100);
+                    }
+                }
+            });
+        }
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+        }
+        function checkForItems(currentTime) {
+            items.forEach((item, index) => {
+                if (!itemsShown.has(index) && currentTime >= item.timestamp && currentTime < item.timestamp + 1) {
+                    if (item.type === 'question') {
+                        showQuestion(item, index);
+                    } else if (item.type === 'statement') {
+                        showStatement(item, index);
+                    }
+                }
+            });
+        }
+        function showQuestion(item, index) {
+            itemsShown.add(index);
+            if (youtubePlayer) youtubePlayer.pauseVideo();
+            document.getElementById('overlayQuestionText').textContent = item.question;
+            document.getElementById('quizFeedback').className = 'quiz-feedback';
+            const answersContainer = document.getElementById('quizAnswers');
+            answersContainer.innerHTML = item.answers.map((answer, i) => 
+                '<div class=\\"quiz-answer\\" onclick=\\"selectAnswer(' + i + ',' + item.correctIndex + ')\\">' + answer + '</div>'
+            ).join('');
+            document.getElementById('questionOverlay').classList.add('active');
+        }
+        function showStatement(item, index) {
+            itemsShown.add(index);
+            if (youtubePlayer) youtubePlayer.pauseVideo();
+            const statementTypes = {
+                'note': { icon: '💬', title: 'Note', color: '#4FC3F7' },
+                'tip': { icon: '💡', title: 'Tip', color: '#FFA94D' },
+                'warning': { icon: '⚠️', title: 'Warning', color: '#FA5252' },
+                'keypoint': { icon: '📌', title: 'Key Point', color: '#06d6a0' },
+                'definition': { icon: '🎯', title: 'Definition', color: '#9775fa' },
+                'welcome': { icon: '🎬', title: 'Welcome', color: '#667eea' },
+                'congrats': { icon: '🎉', title: 'Congratulations', color: '#06d6a0' },
+                'custom': { icon: '✨', title: item.customTitle || 'Custom', color: '#667eea' }
+            };
+            const type = statementTypes[item.statementType || 'note'];
+            const displayTitle = (item.statementType === 'custom' && item.customTitle) ? item.customTitle : type.title;
+            const showIcon = item.showIcon !== 'no';
+            const heading = document.getElementById('statementHeading');
+            heading.textContent = showIcon ? (type.icon + ' ' + displayTitle) : displayTitle;
+            heading.style.color = 'white';
+            document.getElementById('overlayStatementText').textContent = item.text;
+            document.getElementById('statementOverlay').classList.add('active');
+        }
+        function selectAnswer(selected, correct) {
+            const answers = document.querySelectorAll('.quiz-answer');
+            const feedback = document.getElementById('quizFeedback');
+            answers.forEach((answer, i) => {
+                answer.style.pointerEvents = 'none';
+                if (i === correct) answer.classList.add('correct');
+                else if (i === selected) answer.classList.add('incorrect');
+            });
+            if (selected === correct) {
+                feedback.textContent = '🎉 Correct! Great job!';
+                feedback.className = 'quiz-feedback correct show';
+            } else {
+                feedback.textContent = '❌ Incorrect. The correct answer is highlighted.';
+                feedback.className = 'quiz-feedback incorrect show';
+            }
+        }
+        function continueVideo() {
+            document.getElementById('questionOverlay').classList.remove('active');
+            document.getElementById('statementOverlay').classList.remove('active');
+            if (youtubePlayer) youtubePlayer.playVideo();
+        }
+        function checkVideoCompletion(currentTime) {
+            if (certificateShown) return;
+            if (youtubePlayer && youtubePlayer.getDuration) {
+                try {
+                    const duration = youtubePlayer.getDuration();
+                    if (duration > 0 && currentTime >= duration - 2) {
+                        certificateShown = true;
+                        setTimeout(() => {
+                            showCertificate();
+                        }, 1000);
+                    }
+                } catch (e) {}
+            }
+        }
+        function showCertificate() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('certificateDate').textContent = dateStr;
+            document.getElementById('certificateOverlay').style.display = 'flex';
+        }
+        function closeCertificate() {
+            document.getElementById('certificateOverlay').style.display = 'none';
+        }
+    <\/script>
+</body>
+</html>`;
         }
     </script>
 </body>
