@@ -721,7 +721,8 @@
         .overlay-content h3 {
             font-size: 1.5rem;
             margin-bottom: 25px;
-            color: var(--primary);
+            color: var(--hpu-purple);
+            font-weight: 700;
         }
 
         .overlay-content.statement h3 {
@@ -730,6 +731,19 @@
 
         .overlay-content.zoom h3 {
             color: var(--warning);
+        }
+        
+        /* Make question text more readable */
+        .overlay-content #overlayQuestionText {
+            font-size: 1.4rem;
+            line-height: 1.7;
+            color: var(--text-white);
+            font-weight: 600;
+            background: rgba(51, 0, 114, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--hpu-purple);
+            margin-bottom: 25px;
         }
 
         .statement-text {
@@ -797,23 +811,28 @@
         }
 
         .quiz-answer {
-            padding: 15px 20px;
-            background: var(--bg-dark);
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.95);
             border: 2px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 1.1rem;
+            color: #1a1f2e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .quiz-answer:hover {
-            border-color: var(--primary);
-            background: var(--bg-light);
+            border-color: var(--hpu-purple);
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(51, 0, 114, 0.2);
         }
 
         .quiz-answer.selected {
-            border-color: var(--primary);
-            background: var(--primary);
+            border-color: var(--hpu-purple);
+            background: var(--hpu-purple);
             color: white;
         }
 
@@ -821,6 +840,7 @@
             border-color: var(--success);
             background: var(--success);
             color: white;
+            font-weight: 600;
         }
 
         .quiz-answer.incorrect {
