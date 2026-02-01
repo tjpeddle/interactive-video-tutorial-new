@@ -1346,6 +1346,7 @@
         let selectingZoom = false;
         let lastVideoPosition = 0; // Remember where user was in video
         let activeZoom = null; // Currently active zoom animation
+        let certificateShown = false; // Track if certificate already shown
 
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -2709,7 +2710,9 @@
         }
         
         function closeCertificate() {
-            document.getElementById('certificateOverlay').style.display = 'none';
+            const overlay = document.getElementById('certificateOverlay');
+            overlay.style.display = 'none';
+            overlay.classList.remove('active');
         }
         
         function downloadCertificate(format) {
@@ -2724,9 +2727,13 @@
         
         // Check if video completed to show certificate
         function checkVideoCompletion(currentTime) {
+            // Only show certificate once
+            if (certificateShown) return;
+            
             if (videoSource === 'upload' && videoElement) {
                 const duration = videoElement.duration;
                 if (duration > 0 && currentTime >= duration - 1 && currentTime < duration) {
+                    certificateShown = true;
                     setTimeout(() => {
                         showCertificate();
                     }, 1000);
@@ -2735,6 +2742,7 @@
                 try {
                     const duration = youtubePlayer.getDuration();
                     if (duration > 0 && currentTime >= duration - 2 && currentTime < duration) {
+                        certificateShown = true;
                         setTimeout(() => {
                             showCertificate();
                         }, 1000);
