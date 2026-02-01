@@ -1319,6 +1319,9 @@
                     <button onclick="downloadCertificate('pdf')" style="background: var(--hpu-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
                         📄 Download PDF
                     </button>
+                    <button onclick="restartVideo()" style="background: var(--hpu-orange); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
+                        🔄 Restart Video
+                    </button>
                 </div>
                 
                 <button onclick="closeCertificate()" style="background: transparent; color: #888; border: none; padding: 12px 24px; margin-top: 15px; font-size: 0.95rem; cursor: pointer;">
@@ -2715,6 +2718,24 @@
             overlay.classList.remove('active');
         }
         
+        function restartVideo() {
+            // Close certificate
+            closeCertificate();
+            
+            // Reset shown items so they trigger again
+            itemsShown.clear();
+            certificateShown = false;
+            
+            // Restart video from beginning
+            if (videoSource === 'upload' && videoElement) {
+                videoElement.currentTime = 0;
+                videoElement.play();
+            } else if (videoSource === 'youtube' && youtubePlayer && youtubePlayer.seekTo) {
+                youtubePlayer.seekTo(0, true);
+                youtubePlayer.playVideo();
+            }
+        }
+        
         function downloadCertificate(format) {
             // For now, show a message - full implementation would use html2canvas or similar
             if (format === 'png') {
@@ -2837,7 +2858,8 @@
                 </div>
                 <p style="color: #555; font-size: 1rem; line-height: 1.6; margin: 20px 0;">${certMessage}</p>
                 <p style="color: #888; font-size: 0.95rem; margin: 20px 0;">Completion Date: <span id="certificateDate"></span></p>
-                <button onclick="window.print()" style="background: #330072; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">📄 Print Certificate</button>
+                <button onclick="window.print()" style="background: #330072; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; margin-right: 10px;">📄 Print Certificate</button>
+                <button onclick="restartVideo()" style="background: #E87D0D; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">🔄 Restart Video</button>
                 <button onclick="closeCertificate()" style="background: transparent; color: #888; border: none; padding: 12px 24px; margin-top: 15px; font-size: 0.95rem; cursor: pointer; display: block; margin-left: auto; margin-right: auto;">Close</button>
             </div>
         </div>
@@ -2958,6 +2980,15 @@
         }
         function closeCertificate() {
             document.getElementById('certificateOverlay').style.display = 'none';
+        }
+        function restartVideo() {
+            closeCertificate();
+            itemsShown.clear();
+            certificateShown = false;
+            if (youtubePlayer && youtubePlayer.seekTo) {
+                youtubePlayer.seekTo(0, true);
+                youtubePlayer.playVideo();
+            }
         }
     <\/script>
 </body>
