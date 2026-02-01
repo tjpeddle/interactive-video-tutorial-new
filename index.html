@@ -2724,7 +2724,9 @@
             
             // Reset shown items so they trigger again
             itemsShown.clear();
-            certificateShown = false;
+            
+            // Keep certificate disabled temporarily to prevent immediate re-trigger
+            certificateShown = true;
             
             // Restart video from beginning
             if (videoSource === 'upload' && videoElement) {
@@ -2734,6 +2736,11 @@
                 youtubePlayer.seekTo(0, true);
                 youtubePlayer.playVideo();
             }
+            
+            // Re-enable certificate after 3 seconds (video should be away from end)
+            setTimeout(() => {
+                certificateShown = false;
+            }, 3000);
         }
         
         function downloadCertificate(format) {
@@ -2984,11 +2991,14 @@
         function restartVideo() {
             closeCertificate();
             itemsShown.clear();
-            certificateShown = false;
+            certificateShown = true;
             if (youtubePlayer && youtubePlayer.seekTo) {
                 youtubePlayer.seekTo(0, true);
                 youtubePlayer.playVideo();
             }
+            setTimeout(() => {
+                certificateShown = false;
+            }, 3000);
         }
     <\/script>
 </body>
