@@ -2822,14 +2822,9 @@
     <div class="container">
         <div class="panel">
             <p style="text-align: center; color: var(--text-gray); margin-bottom: 20px; font-size: 1.1rem;">Watch and learn with interactive questions, notes, and zoom highlights!</p>
-            <div id="startOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; border-radius: 12px;">
-                <button onclick="startTutorial()" style="background: #330072; color: white; border: none; padding: 20px 40px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; font-weight: 700; box-shadow: 0 4px 20px rgba(51,0,114,0.5);">
-                    ▶️ Start Tutorial
-                </button>
-            </div>
             <div class="video-container" style="position: relative;">
                 <div id="videoContainer">
-                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:500px;border:none;"></iframe>
+                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:500px;border:none;"></iframe>
                 </div>
                 <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; padding: 15px; background: rgba(51, 0, 114, 0.05); border-radius: 8px;">
                     <button id="playPauseBtn" onclick="togglePlayPause()" style="background: #330072; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; min-width: 120px;">
@@ -2837,9 +2832,6 @@
                     </button>
                     <button onclick="skipBackward()" style="background: #9678D3; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
                         ⏪ -10s
-                    </button>
-                    <button onclick="skipForward()" style="background: #9678D3; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
-                        ⏩ +10s
                     </button>
                 </div>
             </div>
@@ -2886,14 +2878,6 @@
         let youtubePlayer = null;
         let itemsShown = new Set();
         let certificateShown = false;
-        
-        function startTutorial() {
-            document.getElementById('startOverlay').style.display = 'none';
-            if (youtubePlayer && youtubePlayer.playVideo) {
-                youtubePlayer.playVideo();
-                document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
-            }
-        }
         
         function togglePlayPause() {
             if (youtubePlayer && youtubePlayer.getPlayerState) {
