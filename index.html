@@ -1294,7 +1294,7 @@
             </div>
             
             <div style="padding: 20px;">
-                <h3 style="color: var(--hpu-purple); font-size: 1.8rem; margin-bottom: 20px; font-weight: 700;">Certificate of Completion</h3>
+                <h3 style="color: var(--hpu-purple); font-size: 1.8rem; margin-bottom: 20px; font-weight: 700;">Tutorial Completed</h3>
                 
                 <div style="height: 2px; width: 100px; background: var(--hpu-purple); margin: 0 auto 20px auto;"></div>
                 
@@ -1313,13 +1313,7 @@
                 </p>
                 
                 <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
-                    <button onclick="downloadCertificate('png')" style="background: var(--hpu-purple); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
-                        📥 Download PNG
-                    </button>
-                    <button onclick="downloadCertificate('pdf')" style="background: var(--hpu-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
-                        📄 Download PDF
-                    </button>
-                    <button onclick="restartVideo()" style="background: var(--hpu-orange); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
+                    <button onclick="restartVideo()" style="background: var(--hpu-orange); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: 600;">
                         🔄 Restart Video
                     </button>
                 </div>
@@ -2828,9 +2822,25 @@
     <div class="container">
         <div class="panel">
             <p style="text-align: center; color: var(--text-gray); margin-bottom: 20px; font-size: 1.1rem;">Watch and learn with interactive questions, notes, and zoom highlights!</p>
-            <div class="video-container">
+            <div id="startOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; border-radius: 12px;">
+                <button onclick="startTutorial()" style="background: #330072; color: white; border: none; padding: 20px 40px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; font-weight: 700; box-shadow: 0 4px 20px rgba(51,0,114,0.5);">
+                    ▶️ Start Tutorial
+                </button>
+            </div>
+            <div class="video-container" style="position: relative;">
                 <div id="videoContainer">
-                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3" allowfullscreen style="width:100%;height:500px;border:none;"></iframe>
+                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:500px;border:none;"></iframe>
+                </div>
+                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; padding: 15px; background: rgba(51, 0, 114, 0.05); border-radius: 8px;">
+                    <button id="playPauseBtn" onclick="togglePlayPause()" style="background: #330072; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; min-width: 120px;">
+                        ▶️ Play
+                    </button>
+                    <button onclick="skipBackward()" style="background: #9678D3; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
+                        ⏪ -10s
+                    </button>
+                    <button onclick="skipForward()" style="background: #9678D3; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
+                        ⏩ +10s
+                    </button>
                 </div>
             </div>
         </div>
@@ -2857,7 +2867,7 @@
                 <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 1rem;">Office of Accessibility Resources and Services (OARS)</p>
             </div>
             <div style="padding: 20px;">
-                <h3 style="color: #330072; font-size: 1.8rem; margin-bottom: 20px; font-weight: 700;">Certificate of Completion</h3>
+                <h3 style="color: #330072; font-size: 1.8rem; margin-bottom: 20px; font-weight: 700;">Tutorial Completed</h3>
                 <div style="height: 2px; width: 100px; background: #330072; margin: 0 auto 20px auto;"></div>
                 <p style="color: #333; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">Thank you for completing this tutorial!</p>
                 <div style="background: rgba(51, 0, 114, 0.05); padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #330072;">
@@ -2865,8 +2875,7 @@
                 </div>
                 <p style="color: #555; font-size: 1rem; line-height: 1.6; margin: 20px 0;">${certMessage}</p>
                 <p style="color: #888; font-size: 0.95rem; margin: 20px 0;">Completion Date: <span id="certificateDate"></span></p>
-                <button onclick="window.print()" style="background: #330072; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; margin-right: 10px;">📄 Print Certificate</button>
-                <button onclick="restartVideo()" style="background: #E87D0D; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">🔄 Restart Video</button>
+                <button onclick="restartVideo()" style="background: #E87D0D; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: 600;">🔄 Restart Video</button>
                 <button onclick="closeCertificate()" style="background: transparent; color: #888; border: none; padding: 12px 24px; margin-top: 15px; font-size: 0.95rem; cursor: pointer; display: block; margin-left: auto; margin-right: auto;">Close</button>
             </div>
         </div>
@@ -2877,6 +2886,45 @@
         let youtubePlayer = null;
         let itemsShown = new Set();
         let certificateShown = false;
+        
+        function startTutorial() {
+            document.getElementById('startOverlay').style.display = 'none';
+            if (youtubePlayer && youtubePlayer.playVideo) {
+                youtubePlayer.playVideo();
+                document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
+            }
+        }
+        
+        function togglePlayPause() {
+            if (youtubePlayer && youtubePlayer.getPlayerState) {
+                const state = youtubePlayer.getPlayerState();
+                const btn = document.getElementById('playPauseBtn');
+                if (state === 1) {
+                    // Currently playing, so pause
+                    youtubePlayer.pauseVideo();
+                    btn.textContent = '▶️ Play';
+                } else {
+                    // Currently paused, so play
+                    youtubePlayer.playVideo();
+                    btn.textContent = '⏸️ Pause';
+                }
+            }
+        }
+        
+        function skipBackward() {
+            if (youtubePlayer && youtubePlayer.getCurrentTime && youtubePlayer.seekTo) {
+                const current = youtubePlayer.getCurrentTime();
+                youtubePlayer.seekTo(Math.max(0, current - 10), true);
+            }
+        }
+        
+        function skipForward() {
+            if (youtubePlayer && youtubePlayer.getCurrentTime && youtubePlayer.seekTo) {
+                const current = youtubePlayer.getCurrentTime();
+                youtubePlayer.seekTo(current + 10, true);
+            }
+        }
+        
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(tag);
@@ -2963,7 +3011,21 @@
         function continueVideo() {
             document.getElementById('questionOverlay').classList.remove('active');
             document.getElementById('statementOverlay').classList.remove('active');
-            if (youtubePlayer) youtubePlayer.playVideo();
+            if (youtubePlayer && youtubePlayer.playVideo) {
+                try {
+                    youtubePlayer.playVideo();
+                    document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
+                } catch (e) {
+                    console.error('Error playing video:', e);
+                    // Retry after short delay
+                    setTimeout(() => {
+                        if (youtubePlayer && youtubePlayer.playVideo) {
+                            youtubePlayer.playVideo();
+                            document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
+                        }
+                    }, 500);
+                }
+            }
         }
         function checkVideoCompletion(currentTime) {
             if (certificateShown) return;
