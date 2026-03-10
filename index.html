@@ -2880,16 +2880,16 @@
         </div>
     </header>
     <div class="container">
-        <div class="panel" style="max-width: 1100px; margin: 0 auto; padding: 10px;">
+        <div class="panel" style="max-width: 1000px; margin: 0 auto; padding: 10px;">
             <div style="display: flex; gap: 20px; align-items: flex-start;">
                 <div id="videoContainer" style="flex: 1;">
                     ${videoSource === 'mp4url' ? `
-                    <video id="videoPlayer" controls autoplay style="width: 100%; height: auto; max-height: none; border-radius: 8px;">
+                    <video id="videoPlayer" controls autoplay style="width: 100%; max-height: 600px; border-radius: 8px; display: block;">
                         <source src="${mp4UrlSource}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                     ` : `
-                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:900px;border:none;border-radius:8px;"></iframe>
+                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:600px;border:none;border-radius:8px;"></iframe>
                     `}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 15px; min-width: 160px;">
