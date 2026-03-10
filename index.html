@@ -1004,6 +1004,7 @@
                 <div class="video-source-tabs">
                     <button class="tab-btn active" onclick="setVideoSource('upload')">📁 Upload Video</button>
                     <button class="tab-btn" onclick="setVideoSource('youtube')">📺 YouTube URL</button>
+                    <button class="tab-btn" onclick="setVideoSource('mp4url')">🔗 MP4 URL (GitHub)</button>
                 </div>
 
                 <div id="uploadTab" class="upload-area" onclick="document.getElementById('videoInput').click()">
@@ -1024,6 +1025,21 @@
                     </div>
                     <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 10px;">
                         💡 Tip: Make sure your video is set to "Unlisted" or "Public" with embedding enabled
+                    </p>
+                </div>
+                
+                <div id="mp4urlTab" class="youtube-input">
+                    <div class="form-group">
+                        <label>MP4 File URL (from GitHub)</label>
+                        <input type="url" id="mp4Url" placeholder="https://yourname.github.io/caa-tutorial/caa-tutorial.mp4">
+                    </div>
+                    <button class="control-btn" onclick="loadMP4URL()" style="width: 100%;">Load MP4 Video</button>
+                    <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 10px;">
+                        💡 <strong>Steps:</strong><br>
+                        1. Upload your MP4 to your GitHub tutorial repo<br>
+                        2. Copy the file URL (e.g., https://yourname.github.io/caa-tutorial/video.mp4)<br>
+                        3. Paste it above and click "Load MP4 Video"<br>
+                        <strong>✅ Result: Bigger video, no black bars!</strong>
                     </p>
                 </div>
 
@@ -1330,6 +1346,7 @@
         let itemsShown = new Set();
         let videoSource = 'upload';
         let youtubeVideoId = '';
+        let mp4UrlSource = '';
         let zoomDuration = 5; // Default 5 seconds
         let zoomBox = null; // {x, y, width, height} in percentages
         let isDrawingZoom = false;
@@ -1379,12 +1396,18 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
+            // Hide all tabs
+            document.getElementById('uploadTab').style.display = 'none';
+            document.getElementById('youtubeTab').classList.remove('active');
+            document.getElementById('mp4urlTab').classList.remove('active');
+
+            // Show selected tab
             if (source === 'upload') {
                 document.getElementById('uploadTab').style.display = 'block';
-                document.getElementById('youtubeTab').classList.remove('active');
-            } else {
-                document.getElementById('uploadTab').style.display = 'none';
+            } else if (source === 'youtube') {
                 document.getElementById('youtubeTab').classList.add('active');
+            } else if (source === 'mp4url') {
+                document.getElementById('mp4urlTab').classList.add('active');
             }
         }
 
@@ -1510,6 +1533,49 @@
             // Load a known working YouTube video for testing
             document.getElementById('youtubeUrl').value = 'https://www.youtube.com/watch?v=jNQXAC9IVRw';
             loadYouTube();
+        }
+        
+        function loadMP4URL() {
+            const url = document.getElementById('mp4Url').value.trim();
+            
+            if (!url) {
+                alert('Please enter an MP4 URL');
+                return;
+            }
+            
+            if (!url.endsWith('.mp4') && !url.endsWith('.webm') && !url.endsWith('.ogg')) {
+                alert('URL must end with .mp4, .webm, or .ogg');
+                return;
+            }
+            
+            console.log('Loading MP4 from URL:', url);
+            
+            const container = document.getElementById('videoContainer');
+            container.innerHTML = `
+                <video id="videoPlayer" controls style="width: 100%; height: auto; max-height: 600px; border-radius: 8px;">
+                    <source src="${url}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+            
+            videoElement = document.getElementById('videoPlayer');
+            videoSource = 'mp4url';
+            mp4UrlSource = url; // Store for export
+            document.getElementById('videoPlayerSection').style.display = 'block';
+            
+            // Setup video event listeners
+            videoElement.addEventListener('loadedmetadata', () => {
+                console.log('MP4 video loaded, duration:', videoElement.duration);
+                showNotification('MP4 video loaded! 🎉');
+            });
+            
+            videoElement.addEventListener('error', (e) => {
+                console.error('Error loading MP4:', e);
+                alert('⚠️ Failed to load MP4. Check:\n• URL is correct\n• File is accessible\n• CORS is enabled on GitHub');
+            });
+            
+            setupVideoClickListener();
+            setupVideoControls();
         }
 
         function extractYouTubeId(url) {
@@ -2814,14 +2880,21 @@
         </div>
     </header>
     <div class="container">
-        <div class="panel" style="max-width: 95%; margin: 0 auto; padding: 10px;">
+        <div class="panel" style="max-width: 1100px; margin: 0 auto; padding: 10px;">
             <div style="display: flex; gap: 20px; align-items: flex-start;">
-                <div id="videoContainer" style="flex: 1; max-width: calc(100% - 180px);">
+                <div id="videoContainer" style="flex: 1;">
+                    ${videoSource === 'mp4url' ? `
+                    <video id="videoPlayer" controls autoplay style="width: 100%; height: auto; max-height: none; border-radius: 8px;">
+                        <source src="${mp4UrlSource}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    ` : `
                     <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:900px;border:none;border-radius:8px;"></iframe>
+                    `}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 15px; min-width: 160px;">
                     <button id="playPauseBtn" onclick="togglePlayPause()" style="background: #330072; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; min-width: 140px; white-space: nowrap;">
-                        ▶️ Play
+                        ⏸️ Pause
                     </button>
                     <button onclick="skipBackward()" style="background: #9678D3; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; white-space: nowrap;">
                         ⏪ -10s
@@ -2870,20 +2943,44 @@
     <script>
         const items = ${JSON.stringify(items)};
         const youtubeVideoId = "${youtubeVideoId}";
+        const videoSource = "${videoSource}";
+        const mp4UrlSource = "${mp4UrlSource}";
         let youtubePlayer = null;
+        let videoElement = null;
         let itemsShown = new Set();
         let certificateShown = false;
         
+        // Initialize video player based on source
+        if (videoSource === 'mp4url') {
+            videoElement = document.getElementById('videoPlayer');
+            
+            // MP4 video monitoring
+            setInterval(() => {
+                if (videoElement && !videoElement.paused) {
+                    const currentTime = videoElement.currentTime;
+                    checkForItems(currentTime);
+                    checkVideoCompletion(currentTime);
+                }
+            }, 100);
+        }
+        
         function togglePlayPause() {
-            if (youtubePlayer && youtubePlayer.getPlayerState) {
+            const btn = document.getElementById('playPauseBtn');
+            
+            if (videoSource === 'mp4url' && videoElement) {
+                if (videoElement.paused) {
+                    videoElement.play();
+                    btn.textContent = '⏸️ Pause';
+                } else {
+                    videoElement.pause();
+                    btn.textContent = '▶️ Play';
+                }
+            } else if (youtubePlayer && youtubePlayer.getPlayerState) {
                 const state = youtubePlayer.getPlayerState();
-                const btn = document.getElementById('playPauseBtn');
                 if (state === 1) {
-                    // Currently playing, so pause
                     youtubePlayer.pauseVideo();
                     btn.textContent = '▶️ Play';
                 } else {
-                    // Currently paused, so play
                     youtubePlayer.playVideo();
                     btn.textContent = '⏸️ Pause';
                 }
@@ -2891,7 +2988,9 @@
         }
         
         function skipBackward() {
-            if (youtubePlayer && youtubePlayer.getCurrentTime && youtubePlayer.seekTo) {
+            if (videoSource === 'mp4url' && videoElement) {
+                videoElement.currentTime = Math.max(0, videoElement.currentTime - 10);
+            } else if (youtubePlayer && youtubePlayer.getCurrentTime && youtubePlayer.seekTo) {
                 const current = youtubePlayer.getCurrentTime();
                 youtubePlayer.seekTo(Math.max(0, current - 10), true);
             }
@@ -2940,7 +3039,11 @@
         }
         function showQuestion(item, index) {
             itemsShown.add(index);
-            if (youtubePlayer) youtubePlayer.pauseVideo();
+            if (videoSource === 'mp4url' && videoElement) {
+                videoElement.pause();
+            } else if (youtubePlayer) {
+                youtubePlayer.pauseVideo();
+            }
             document.getElementById('overlayQuestionText').textContent = item.question;
             document.getElementById('quizFeedback').className = 'quiz-feedback';
             const answersContainer = document.getElementById('quizAnswers');
@@ -2951,7 +3054,11 @@
         }
         function showStatement(item, index) {
             itemsShown.add(index);
-            if (youtubePlayer) youtubePlayer.pauseVideo();
+            if (videoSource === 'mp4url' && videoElement) {
+                videoElement.pause();
+            } else if (youtubePlayer) {
+                youtubePlayer.pauseVideo();
+            }
             const statementTypes = {
                 'note': { icon: '💬', title: 'Note', color: '#4FC3F7' },
                 'tip': { icon: '💡', title: 'Tip', color: '#FFA94D' },
@@ -2990,13 +3097,16 @@
         function continueVideo() {
             document.getElementById('questionOverlay').classList.remove('active');
             document.getElementById('statementOverlay').classList.remove('active');
-            if (youtubePlayer && youtubePlayer.playVideo) {
+            
+            if (videoSource === 'mp4url' && videoElement) {
+                videoElement.play();
+                document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
+            } else if (youtubePlayer && youtubePlayer.playVideo) {
                 try {
                     youtubePlayer.playVideo();
                     document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
                 } catch (e) {
                     console.error('Error playing video:', e);
-                    // Retry after short delay
                     setTimeout(() => {
                         if (youtubePlayer && youtubePlayer.playVideo) {
                             youtubePlayer.playVideo();
@@ -3008,16 +3118,21 @@
         }
         function checkVideoCompletion(currentTime) {
             if (certificateShown) return;
-            if (youtubePlayer && youtubePlayer.getDuration) {
+            
+            let duration = 0;
+            if (videoSource === 'mp4url' && videoElement) {
+                duration = videoElement.duration;
+            } else if (youtubePlayer && youtubePlayer.getDuration) {
                 try {
-                    const duration = youtubePlayer.getDuration();
-                    if (duration > 0 && currentTime >= duration - 2) {
-                        certificateShown = true;
-                        setTimeout(() => {
-                            showCertificate();
-                        }, 1000);
-                    }
+                    duration = youtubePlayer.getDuration();
                 } catch (e) {}
+            }
+            
+            if (duration > 0 && currentTime >= duration - 2) {
+                certificateShown = true;
+                setTimeout(() => {
+                    showCertificate();
+                }, 1000);
             }
         }
         function showCertificate() {
@@ -3033,10 +3148,15 @@
             closeCertificate();
             itemsShown.clear();
             certificateShown = true;
-            if (youtubePlayer && youtubePlayer.seekTo) {
+            
+            if (videoSource === 'mp4url' && videoElement) {
+                videoElement.currentTime = 0;
+                videoElement.play();
+            } else if (youtubePlayer && youtubePlayer.seekTo) {
                 youtubePlayer.seekTo(0, true);
                 youtubePlayer.playVideo();
             }
+            
             setTimeout(() => {
                 certificateShown = false;
             }, 3000);
