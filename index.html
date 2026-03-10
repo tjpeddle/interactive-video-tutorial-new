@@ -2805,29 +2805,28 @@
     <style>${styleContent}</style>
 </head>
 <body>
-    <header style="background: linear-gradient(135deg, #330072 0%, #9678D3 100%); padding: 25px 0; box-shadow: 0 4px 20px rgba(51, 0, 114, 0.3);">
+    <header style="background: linear-gradient(135deg, #330072 0%, #9678D3 100%); padding: 15px 0; box-shadow: 0 4px 20px rgba(51, 0, 114, 0.3);">
         <div class="container" style="text-align: center;">
-            <h1 style="margin: 0 0 10px 0; font-size: 2.5rem; font-weight: 700; color: #FFFFFF !important; text-shadow: none; background: none !important; -webkit-text-fill-color: #FFFFFF !important;">High Point University</h1>
-            <p style="margin: 0 0 15px 0; font-size: 1.2rem; color: #FFFFFF !important; font-weight: 500; text-shadow: none;">Office of Accessibility Resources and Services (OARS)</p>
-            <div style="height: 2px; width: 200px; background: rgba(255,255,255,0.6); margin: 0 auto 12px auto;"></div>
-            <p class="subtitle" style="color: #FFFFFF !important; font-size: 1.1rem; margin: 0; font-weight: 500; text-shadow: none;">Interactive Video Tutorial</p>
+            <h1 style="margin: 0 0 5px 0; font-size: 1.6rem; font-weight: 700; color: #FFFFFF !important; text-shadow: none; background: none !important; -webkit-text-fill-color: #FFFFFF !important;">High Point University</h1>
+            <p style="margin: 0 0 8px 0; font-size: 0.9rem; color: #FFFFFF !important; font-weight: 500; text-shadow: none;">Office of Accessibility Resources and Services (OARS)</p>
+            <div style="height: 1px; width: 150px; background: rgba(255,255,255,0.6); margin: 0 auto 8px auto;"></div>
+            <p class="subtitle" style="color: #FFFFFF !important; font-size: 0.95rem; margin: 0; font-weight: 500; text-shadow: none;">Interactive Video Tutorial</p>
         </div>
     </header>
     <div class="container">
-        <div class="panel" style="max-width: 1200px; margin: 0 auto;">
-            <p style="text-align: center; color: var(--text-gray); margin-bottom: 20px; font-size: 1.1rem;">Watch and learn with interactive questions, notes, and zoom highlights!</p>
-            <div class="video-container" style="position: relative;">
-                <div id="videoContainer">
-                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:675px;border:none;"></iframe>
+        <div class="panel" style="max-width: 1400px; margin: 0 auto;">
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div id="videoContainer" style="flex: 1;">
+                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:700px;border:none;border-radius:8px;"></iframe>
                 </div>
-                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; padding: 15px; background: rgba(51, 0, 114, 0.05); border-radius: 8px;">
-                    <button id="playPauseBtn" onclick="togglePlayPause()" style="background: #330072; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; min-width: 120px;">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <button id="playPauseBtn" onclick="togglePlayPause()" style="background: #330072; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; min-width: 140px; white-space: nowrap;">
                         ▶️ Play
                     </button>
-                    <button onclick="skipBackward()" style="background: #9678D3; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
+                    <button onclick="skipBackward()" style="background: #9678D3; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; white-space: nowrap;">
                         ⏪ -10s
                     </button>
-                    <button onclick="restartVideo()" style="background: #E87D0D; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
+                    <button onclick="restartVideo()" style="background: #E87D0D; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; white-space: nowrap;">
                         🔄 Start Over
                     </button>
                 </div>
