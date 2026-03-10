@@ -2814,12 +2814,12 @@
         </div>
     </header>
     <div class="container">
-        <div class="panel" style="max-width: 1400px; margin: 0 auto;">
-            <div style="display: flex; gap: 20px; align-items: center;">
-                <div id="videoContainer" style="flex: 1;">
-                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:700px;border:none;border-radius:8px;"></iframe>
+        <div class="panel" style="max-width: 95%; margin: 0 auto; padding: 10px;">
+            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                <div id="videoContainer" style="flex: 1; max-width: calc(100% - 180px);">
+                    <iframe id="youtubePlayer" src="https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1&mute=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:900px;border:none;border-radius:8px;"></iframe>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; flex-direction: column; gap: 15px; min-width: 160px;">
                     <button id="playPauseBtn" onclick="togglePlayPause()" style="background: #330072; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; min-width: 140px; white-space: nowrap;">
                         ▶️ Play
                     </button>
