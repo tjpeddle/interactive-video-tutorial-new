@@ -2755,7 +2755,7 @@
             const certTitle = document.getElementById('certificateTitle').value || 'Interactive Video Tutorial';
             const certMessage = document.getElementById('certificateMessage').value || 'Your commitment to learning and professional development is appreciated.';
             
-            document.getElementById('certificateTitleDisplay').textContent = '"' + certTitle + '"';
+            document.getElementById('certificateTitleDisplay').textContent = certTitle;
             
             // Format message: convert newlines, bullets, and bold text
             let formattedMessage = certMessage
@@ -2944,7 +2944,7 @@
                 <h3 style="color: #330072; font-size: 1.85rem; margin: 0 0 10px 0; font-weight: 700;">Tutorial Completed</h3>
                 <div style="height: 3px; width: 120px; background: linear-gradient(90deg, #330072, #9678D3); margin: 0 auto 18px auto; border-radius: 2px;"></div>
                 <div style="background: rgba(51, 0, 114, 0.06); padding: 12px 20px; border-radius: 10px; margin: 14px 0; border-left: 5px solid #330072; box-shadow: 0 2px 8px rgba(51, 0, 114, 0.08);">
-                    <p style="color: #330072; font-size: 1.3rem; font-weight: 700; margin: 0;">"${certTitle}"</p>
+                    <p style="color: #330072; font-size: 1.3rem; font-weight: 700; margin: 0;">${certTitle}</p>
                 </div>
                 <div style="color: #444; font-size: 1.05rem; line-height: 1.35; margin: 14px 0; text-align: left; padding: 0 10px;">${certMessageFormatted}</div>
                 <p style="color: #888; font-size: 0.85rem; margin: 18px 0 0 0; padding-top: 14px; border-top: 2px solid #f0f0f0;">Completion Date: <span id="certificateDate" style="font-weight: 600; color: #666;"></span></p>
