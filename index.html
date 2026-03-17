@@ -2974,6 +2974,14 @@
                     checkVideoCompletion(currentTime);
                 }
             }, 100);
+
+            // Fallback: trigger certificate directly when video ends
+            videoElement.addEventListener('ended', () => {
+                if (!certificateShown) {
+                    certificateShown = true;
+                    setTimeout(() => { showCertificate(); }, 500);
+                }
+            });
         }
         
         function togglePlayPause() {
