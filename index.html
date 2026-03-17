@@ -1003,7 +1003,6 @@
                 
                 <div class="video-source-tabs">
                     <button class="tab-btn active" onclick="setVideoSource('upload')">📁 Upload Video</button>
-                    <button class="tab-btn" onclick="setVideoSource('youtube')">📺 YouTube URL</button>
                     <button class="tab-btn" onclick="setVideoSource('mp4url')">🔗 MP4 URL (GitHub)</button>
                 </div>
 
@@ -1014,20 +1013,6 @@
                     <input type="file" id="videoInput" accept="video/*">
                 </div>
 
-                <div id="youtubeTab" class="youtube-input">
-                    <div class="form-group">
-                        <label>YouTube Video URL</label>
-                        <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="control-btn" onclick="loadYouTube()" style="flex: 1;">Load YouTube Video</button>
-                        <button class="control-btn" onclick="loadTestVideo()" style="flex: 1; background: var(--success);">🧪 Test with Sample Video</button>
-                    </div>
-                    <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 10px;">
-                        💡 Tip: Make sure your video is set to "Unlisted" or "Public" with embedding enabled
-                    </p>
-                </div>
-                
                 <div id="mp4urlTab" class="youtube-input">
                     <div class="form-group">
                         <label>MP4 File URL (from GitHub)</label>
@@ -1094,10 +1079,10 @@
 
                 <div class="question-form">
                     <div class="form-group">
-                        <label>Timestamp (seconds)</label>
-                        <input type="number" id="timestamp" placeholder="e.g., 1.37 or 30" min="0" step="0.01">
+                        <label>Timestamp</label>
+                        <input type="text" id="timestamp" placeholder="e.g., 1:35 or 95">
                         <p style="color: var(--text-gray); font-size: 0.85rem; margin-top: 5px;">
-                            💡 Enter time in seconds (decimals OK: 1.37, 5.5, 30, etc.)
+                            💡 Enter time as <strong>MM:SS</strong> (1:35) or seconds (95)
                         </p>
                     </div>
 
@@ -1303,32 +1288,32 @@
 
     <!-- Certificate Overlay -->
     <div class="overlay" id="certificateOverlay" style="display: none;">
-        <div class="overlay-content" style="max-width: 700px; text-align: center; background: white; color: #000; border: 3px solid var(--hpu-purple); box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-            <div style="background: linear-gradient(135deg, var(--hpu-purple) 0%, var(--hpu-light-purple) 100%); padding: 20px; margin: -20px -20px 20px -20px; border-radius: 12px 12px 0 0;">
-                <h2 style="color: white; margin: 0; font-size: 1.8rem;">High Point University</h2>
-                <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 1rem;">Office of Accessibility Resources and Services (OARS)</p>
+        <div class="overlay-content" style="max-width: 950px; width: 90%; max-height: 90vh; text-align: center; background: white; color: #000; border: 3px solid var(--hpu-purple); box-shadow: 0 30px 80px rgba(0,0,0,0.4); border-radius: 16px; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, var(--hpu-purple) 0%, var(--hpu-light-purple) 100%); padding: 18px 30px; margin: -3px -3px 0 -3px; border-radius: 13px 13px 0 0;">
+                <h2 style="color: white; margin: 0; font-size: 1.75rem; font-weight: 700;">High Point University</h2>
+                <p style="color: rgba(255,255,255,0.95); margin: 6px 0 0 0; font-size: 0.95rem; font-weight: 500;">Office of Accessibility Resources and Services (OARS)</p>
             </div>
             
-            <div style="padding: 20px;">
-                <h3 style="color: var(--hpu-purple); font-size: 1.8rem; margin-bottom: 20px; font-weight: 700;">Tutorial Completed</h3>
+            <div style="padding: 22px 40px 28px 40px;">
+                <h3 style="color: var(--hpu-purple); font-size: 1.85rem; margin: 0 0 10px 0; font-weight: 700;">Tutorial Completed</h3>
                 
-                <div style="height: 2px; width: 100px; background: var(--hpu-purple); margin: 0 auto 20px auto;"></div>
+                <div style="height: 3px; width: 120px; background: linear-gradient(90deg, var(--hpu-purple), var(--hpu-light-purple)); margin: 0 auto 14px auto; border-radius: 2px;"></div>
                 
-                <p style="color: #333; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">
+                <p style="color: #333; font-size: 1rem; line-height: 1.4; margin: 0 0 14px 0;">
                     Thank you for completing this tutorial!
                 </p>
                 
-                <div style="background: rgba(51, 0, 114, 0.05); padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid var(--hpu-purple);">
-                    <p id="certificateTitleDisplay" style="color: var(--hpu-purple); font-size: 1.3rem; font-weight: 600; margin: 0;"></p>
+                <div style="background: rgba(51, 0, 114, 0.06); padding: 12px 20px; border-radius: 10px; margin: 14px 0; border-left: 5px solid var(--hpu-purple); box-shadow: 0 2px 8px rgba(51, 0, 114, 0.08);">
+                    <p id="certificateTitleDisplay" style="color: var(--hpu-purple); font-size: 1.3rem; font-weight: 700; margin: 0;"></p>
                 </div>
                 
-                <p id="certificateMessageDisplay" style="color: #555; font-size: 0.95rem; line-height: 1.5; margin: 15px 0; max-height: 300px; overflow-y: auto;"></p>
+                <div id="certificateMessageDisplay" style="color: #444; font-size: 0.88rem; line-height: 1.55; margin: 14px 0; text-align: left; padding: 0 10px;"></div>
                 
-                <p style="color: #888; font-size: 0.95rem; margin: 20px 0;">
-                    Completion Date: <span id="certificateDate"></span>
+                <p style="color: #888; font-size: 0.85rem; margin: 18px 0 0 0; padding-top: 14px; border-top: 2px solid #f0f0f0;">
+                    Completion Date: <span id="certificateDate" style="font-weight: 600; color: #666;"></span>
                 </p>
                 
-                <button onclick="closeCertificate()" style="background: var(--hpu-purple); color: white; border: none; padding: 15px 30px; margin-top: 30px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: 600;">
+                <button onclick="closeCertificate()" style="background: linear-gradient(135deg, var(--hpu-purple), #4a0094); color: white; border: none; padding: 12px 35px; margin-top: 20px; border-radius: 10px; font-size: 1rem; cursor: pointer; font-weight: 600; box-shadow: 0 4px 15px rgba(51, 0, 114, 0.3); transition: all 0.3s ease;">
                     Close
                 </button>
             </div>
@@ -1958,11 +1943,32 @@
             container.appendChild(div);
         }
 
+        // Convert MM:SS or M:SS to seconds
+        function parseTimestamp(input) {
+            if (!input) return null;
+            
+            const str = input.toString().trim();
+            
+            // Check if it contains a colon (MM:SS format)
+            if (str.includes(':')) {
+                const parts = str.split(':');
+                if (parts.length === 2) {
+                    const minutes = parseInt(parts[0]) || 0;
+                    const seconds = parseFloat(parts[1]) || 0;
+                    return (minutes * 60) + seconds;
+                }
+            }
+            
+            // Otherwise treat as plain seconds
+            return parseFloat(str);
+        }
+
         function addContent() {
-            const timestamp = parseFloat(document.getElementById('timestamp').value);
+            const timestampInput = document.getElementById('timestamp').value;
+            const timestamp = parseTimestamp(timestampInput);
             
             if (!timestamp && timestamp !== 0) {
-                alert('Please enter a timestamp');
+                alert('Please enter a valid timestamp (e.g., 1:35 or 95)');
                 return;
             }
 
@@ -2936,21 +2942,21 @@
         </div>
     </div>
     <div class="overlay" id="certificateOverlay" style="display: none;">
-        <div class="overlay-content" style="max-width: 700px; text-align: center; background: white; color: #000; border: 3px solid #330072; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-            <div style="background: linear-gradient(135deg, #330072 0%, #9678D3 100%); padding: 20px; margin: -20px -20px 20px -20px; border-radius: 12px 12px 0 0;">
-                <h2 style="color: white; margin: 0; font-size: 1.8rem;">High Point University</h2>
-                <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 1rem;">Office of Accessibility Resources and Services (OARS)</p>
+        <div class="overlay-content" style="max-width: 950px; width: 90%; max-height: 90vh; text-align: center; background: white; color: #000; border: 3px solid #330072; box-shadow: 0 30px 80px rgba(0,0,0,0.4); border-radius: 16px; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #330072 0%, #9678D3 100%); padding: 18px 30px; margin: -3px -3px 0 -3px; border-radius: 13px 13px 0 0;">
+                <h2 style="color: white; margin: 0; font-size: 1.75rem; font-weight: 700;">High Point University</h2>
+                <p style="color: rgba(255,255,255,0.95); margin: 6px 0 0 0; font-size: 0.95rem; font-weight: 500;">Office of Accessibility Resources and Services (OARS)</p>
             </div>
-            <div style="padding: 20px;">
-                <h3 style="color: #330072; font-size: 1.8rem; margin-bottom: 20px; font-weight: 700;">Tutorial Completed</h3>
-                <div style="height: 2px; width: 100px; background: #330072; margin: 0 auto 20px auto;"></div>
-                <p style="color: #333; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">Thank you for completing this tutorial!</p>
-                <div style="background: rgba(51, 0, 114, 0.05); padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #330072;">
-                    <p style="color: #330072; font-size: 1.3rem; font-weight: 600; margin: 0;">"${certTitle}"</p>
+            <div style="padding: 22px 40px 28px 40px;">
+                <h3 style="color: #330072; font-size: 1.85rem; margin: 0 0 10px 0; font-weight: 700;">Tutorial Completed</h3>
+                <div style="height: 3px; width: 120px; background: linear-gradient(90deg, #330072, #9678D3); margin: 0 auto 14px auto; border-radius: 2px;"></div>
+                <p style="color: #333; font-size: 1rem; line-height: 1.4; margin: 0 0 14px 0;">Thank you for completing this tutorial!</p>
+                <div style="background: rgba(51, 0, 114, 0.06); padding: 12px 20px; border-radius: 10px; margin: 14px 0; border-left: 5px solid #330072; box-shadow: 0 2px 8px rgba(51, 0, 114, 0.08);">
+                    <p style="color: #330072; font-size: 1.3rem; font-weight: 700; margin: 0;">"${certTitle}"</p>
                 </div>
-                <p style="color: #555; font-size: 0.95rem; line-height: 1.5; margin: 15px 0; text-align: left; max-height: 300px; overflow-y: auto;">${certMessageFormatted}</p>
-                <p style="color: #888; font-size: 0.95rem; margin: 20px 0;">Completion Date: <span id="certificateDate"></span></p>
-                <button onclick="closeCertificate()" style="background: #330072; color: white; border: none; padding: 15px 30px; margin-top: 20px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: 600;">Close</button>
+                <div style="color: #444; font-size: 0.88rem; line-height: 1.55; margin: 14px 0; text-align: left; padding: 0 10px;">${certMessageFormatted}</div>
+                <p style="color: #888; font-size: 0.85rem; margin: 18px 0 0 0; padding-top: 14px; border-top: 2px solid #f0f0f0;">Completion Date: <span id="certificateDate" style="font-weight: 600; color: #666;"></span></p>
+                <button onclick="closeCertificate()" style="background: linear-gradient(135deg, #330072, #4a0094); color: white; border: none; padding: 12px 35px; margin-top: 20px; border-radius: 10px; font-size: 1rem; cursor: pointer; font-weight: 600; box-shadow: 0 4px 15px rgba(51, 0, 114, 0.3); transition: all 0.3s ease;">Close</button>
             </div>
         </div>
     </div>
