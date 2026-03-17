@@ -1383,14 +1383,11 @@
 
             // Hide all tabs
             document.getElementById('uploadTab').style.display = 'none';
-            document.getElementById('youtubeTab').classList.remove('active');
             document.getElementById('mp4urlTab').classList.remove('active');
 
             // Show selected tab
             if (source === 'upload') {
                 document.getElementById('uploadTab').style.display = 'block';
-            } else if (source === 'youtube') {
-                document.getElementById('youtubeTab').classList.add('active');
             } else if (source === 'mp4url') {
                 document.getElementById('mp4urlTab').classList.add('active');
             }
