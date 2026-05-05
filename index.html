@@ -3159,6 +3159,7 @@
         }
         function logCompletion() {
             try {
+                const tutorialName = document.getElementById('certificateTitleDisplay') ? document.getElementById('certificateTitleDisplay').textContent : 'Tutorial';
                 fetch('https://wxglvxljwzymjfljurph.supabase.co/rest/v1/tutorial_completions', {
                     method: 'POST',
                     headers: {
@@ -3167,7 +3168,7 @@
                         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Z2x2eGxqd3p5bWpmbGp1cnBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NTcwMjEsImV4cCI6MjA5MDAzMzAyMX0.mjXOWt9dO1piWH2FJvZXhn26NF_y9qi1952kuwdjd1o',
                         'Prefer': 'return=minimal'
                     },
-                    body: JSON.stringify({ created_at: new Date().toISOString() })
+                    body: JSON.stringify({ created_at: new Date().toISOString(), tutorial_name: tutorialName })
                 });
             } catch(e) {}
         }
